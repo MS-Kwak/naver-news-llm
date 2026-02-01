@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'YSPF Text-to-SQL PoC',
-  description: '양계장 관리 시스템 - 자연어 데이터 조회',
+  title: 'NAVER 뉴스 AI 어시스턴트 PoC',
+  description: 'NAVER 뉴스 AI 어시스턴트 PoC',
 };
 
 export default function RootLayout({

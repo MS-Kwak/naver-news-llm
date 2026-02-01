@@ -35,7 +35,8 @@ export async function searchNews(
   if (!NAVER_CLIENT_ID || !NAVER_CLIENT_SECRET) {
     return {
       success: false,
-      error: '네이버 API 키가 설정되지 않았습니다. .env.local에 NAVER_CLIENT_ID와 NAVER_CLIENT_SECRET을 설정하세요.',
+      error:
+        '네이버 API 키가 설정되지 않았습니다. .env.local에 NAVER_CLIENT_ID와 NAVER_CLIENT_SECRET을 설정하세요.',
     };
   }
 
@@ -137,7 +138,10 @@ export async function searchBlog(
     });
 
     if (!response.ok) {
-      return { success: false, error: `API 오류 (${response.status})` };
+      return {
+        success: false,
+        error: `API 오류 (${response.status})`,
+      };
     }
 
     const data = await response.json();

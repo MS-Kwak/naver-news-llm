@@ -37,7 +37,10 @@ export default function Home() {
   const sendMessage = async (question: string) => {
     if (!question.trim() || loading) return;
 
-    setMessages(prev => [...prev, { role: 'user', content: question }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: 'user', content: question },
+    ]);
     setInput('');
     setLoading(true);
 
@@ -50,7 +53,7 @@ export default function Home() {
 
       const data = await res.json();
 
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         {
           role: 'assistant',
@@ -63,9 +66,13 @@ export default function Home() {
         },
       ]);
     } catch (err) {
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: '⚠️ 오류가 발생했습니다.', error: String(err) },
+        {
+          role: 'assistant',
+          content: '⚠️ 오류가 발생했습니다.',
+          error: String(err),
+        },
       ]);
     } finally {
       setLoading(false);
@@ -77,7 +84,9 @@ export default function Home() {
       {/* 헤더 */}
       <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 shadow-lg">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl font-bold">📰 뉴스 AI 어시스턴트</h1>
+          <h1 className="text-2xl font-bold">
+            📰 뉴스 AI 어시스턴트
+          </h1>
           <p className="text-blue-200 text-sm">
             네이버 뉴스 API + LLM 분석 PoC
           </p>
@@ -88,7 +97,9 @@ export default function Home() {
         {/* 예시 질문 */}
         {messages.length === 0 && (
           <div className="mb-6">
-            <p className="text-gray-400 mb-3 text-sm">💡 이런 질문을 해보세요:</p>
+            <p className="text-gray-400 mb-3 text-sm">
+              💡 이런 질문을 해보세요:
+            </p>
             <div className="flex flex-wrap gap-2">
               {examples.map((ex, i) => (
                 <button
@@ -119,7 +130,9 @@ export default function Home() {
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${
+                msg.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
             >
               <div
                 className={`max-w-[85%] rounded-2xl p-4 ${
@@ -150,7 +163,9 @@ export default function Home() {
                 {/* 뉴스 목록 */}
                 {msg.news && msg.news.length > 0 && (
                   <div className="mt-4 pt-3 border-t border-gray-700">
-                    <p className="text-xs text-gray-400 mb-2">📌 관련 뉴스 링크</p>
+                    <p className="text-xs text-gray-400 mb-2">
+                      📌 관련 뉴스 링크
+                    </p>
                     <div className="space-y-2">
                       {msg.news.slice(0, 5).map((item, newsIdx) => (
                         <a
@@ -163,7 +178,9 @@ export default function Home() {
                           <p className="text-sm text-blue-400 group-hover:underline line-clamp-1">
                             {item.title}
                           </p>
-                          <p className="text-xs text-gray-500 mt-1">{item.pubDate}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {item.pubDate}
+                          </p>
                         </a>
                       ))}
                     </div>
@@ -186,7 +203,9 @@ export default function Home() {
               <div className="bg-gray-800 rounded-2xl p-4">
                 <div className="flex items-center gap-2">
                   <div className="animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full" />
-                  <span className="text-gray-300 text-sm">뉴스 검색 및 분석 중...</span>
+                  <span className="text-gray-300 text-sm">
+                    뉴스 검색 및 분석 중...
+                  </span>
                 </div>
               </div>
             </div>
@@ -199,8 +218,10 @@ export default function Home() {
             <input
               type="text"
               value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && sendMessage(input)}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === 'Enter' && sendMessage(input)
+              }
               placeholder="뉴스에 대해 물어보세요..."
               className="flex-1 px-4 py-3 bg-gray-800 text-white rounded-full border border-gray-700
                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -215,7 +236,8 @@ export default function Home() {
             </button>
           </div>
           <p className="text-center text-gray-600 text-xs mt-2">
-            네이버 뉴스 API + OpenAI GPT-4o | LLM + 외부 데이터 연동 PoC
+            네이버 뉴스 API + OpenAI GPT-4o | LLM + 외부 데이터 연동
+            PoC
           </p>
         </div>
       </div>

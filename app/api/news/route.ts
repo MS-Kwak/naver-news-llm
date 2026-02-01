@@ -12,9 +12,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { searchNews, NewsItem } from '@/lib/naver';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy initialization - 빌드 시점에 환경 변수 체크 방지
+let openai: OpenAI | null = null;
+
+function getOpenAI(): OpenAI {
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openai;
+}
 
 // =============================================================================
 // 프롬프트 정의
@@ -64,11 +72,14 @@ export async function POST(request: NextRequest) {
     const { question, mode = 'search' } = await request.json();
 
     if (!question) {
-      return NextResponse.json({ error: '질문을 입력해주세요.' }, { status: 400 });
+      return NextResponse.json(
+        { error: '질문을 입력해주세요.' },
+        { status: 400 }
+      );
     }
 
     // 1. 검색 키워드 추출
-    const keywordResponse = await openai.chat.completions.create({
+    const keywordResponse = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: KEYWORD_EXTRACT_PROMPT },
@@ -78,7 +89,9 @@ export async function POST(request: NextRequest) {
       response_format: { type: 'json_object' },
     });
 
-    const keywordResult = JSON.parse(keywordResponse.choices[0]?.message?.content || '{}');
+    const keywordResult = JSON.parse(
+      keywordResponse.choices[0]?.message?.content || '{}'
+    );
     const searchQuery = keywordResult.searchQuery || question;
 
     // 2. 네이버 뉴스 검색
@@ -103,16 +116,25 @@ export async function POST(request: NextRequest) {
 
     // 3. 뉴스 컨텍스트 생성
     const newsContext = newsResult.items
-      .map((item: NewsItem, idx: number) =>
-        `[${idx + 1}] ${item.title}\n발행: ${item.pubDate}\n내용: ${item.description}\n링크: ${item.link}`
+      .map(
+        (item: NewsItem, idx: number) =>
+          `[${idx + 1}] ${item.title}\n발행: ${item.pubDate}\n내용: ${
+            item.description
+          }\n링크: ${item.link}`
       )
       .join('\n\n');
 
     // 4. LLM으로 분석/요약
-    const analysisResponse = await openai.chat.completions.create({
+    const analysisResponse = await getOpenAI().chat.completions.create({
       model: 'gpt-4o',
       messages: [
-        { role: 'system', content: mode === 'summary' ? SUMMARY_PROMPT : NEWS_ANALYSIS_PROMPT },
+        {
+          role: 'system',
+          content:
+            mode === 'summary'
+              ? SUMMARY_PROMPT
+              : NEWS_ANALYSIS_PROMPT,
+        },
         {
           role: 'user',
           content: `사용자 질문: ${question}\n\n검색된 뉴스 (${newsResult.items.length}건):\n\n${newsContext}`,
@@ -121,7 +143,8 @@ export async function POST(request: NextRequest) {
       temperature: 0.3,
     });
 
-    const analysis = analysisResponse.choices[0]?.message?.content || '';
+    const analysis =
+      analysisResponse.choices[0]?.message?.content || '';
 
     // 5. 응답 구성
     const response = {
@@ -135,7 +158,6 @@ export async function POST(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-
   } catch (error: any) {
     console.error('API Error:', error);
     return NextResponse.json(

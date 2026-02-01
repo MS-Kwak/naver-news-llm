@@ -147,13 +147,13 @@ export async function testConnection(): Promise<boolean> {
 
 // 기존 코드 호환을 위한 default export
 const connPool = {
-  query: async (...args: any[]) => {
+  query: async (sql: string, values?: any) => {
     const currentPool = getPool();
-    return currentPool.query(...args);
+    return currentPool.query(sql, values);
   },
-  execute: async (...args: any[]) => {
+  execute: async (sql: string, values?: any) => {
     const currentPool = getPool();
-    return currentPool.execute(...args);
+    return currentPool.execute(sql, values);
   },
 };
 
