@@ -36,15 +36,15 @@ nextjs-text2sql-poc/
 
 ## ⚙️ 환경변수
 
-| 변수 | 설명 | 예시 |
-|------|------|------|
-| `OPENAI_API_KEY` | OpenAI API 키 | `sk-...` |
-| `DB_HOST` | DB 호스트 | `localhost` |
-| `DB_PORT` | DB 포트 | `3306` |
-| `DB_USER` | DB 사용자 | `root` |
-| `DB_PASSWORD` | DB 비밀번호 | `yourpassword` |
-| `DB_NAME` | DB 이름 | `yspf` |
-| `EXECUTE_SQL` | SQL 실행 여부 | `true` / `false` |
+| 변수             | 설명          | 예시             |
+| ---------------- | ------------- | ---------------- |
+| `OPENAI_API_KEY` | OpenAI API 키 | `sk-...`         |
+| `DB_HOST`        | DB 호스트     | `localhost`      |
+| `DB_PORT`        | DB 포트       | `3306`           |
+| `DB_USER`        | DB 사용자     | `root`           |
+| `DB_PASSWORD`    | DB 비밀번호   | `yourpassword`   |
+| `DB_NAME`        | DB 이름       | `yspf`           |
+| `EXECUTE_SQL`    | SQL 실행 여부 | `true` / `false` |
 
 ## 💬 예시 질문
 
@@ -76,7 +76,9 @@ const anthropic = new Anthropic({
 const message = await anthropic.messages.create({
   model: 'claude-sonnet-4-20250514',
   max_tokens: 1024,
-  messages: [{ role: 'user', content: SYSTEM_PROMPT + '\n\n' + question }],
+  messages: [
+    { role: 'user', content: SYSTEM_PROMPT + '\n\n' + question },
+  ],
 });
 ```
 
